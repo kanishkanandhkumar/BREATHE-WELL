@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BreatheWell · Asthma & breathing coach</title>
-  <!-- Google Fonts & Font Awesome for clean UI/UX -->
+  <title>BreatheWell · interactive asthma coach prototype</title>
+  <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
 
     body {
       font-family: "Inter", sans-serif;
-      background: linear-gradient(145deg, #f4f8ff 0%, #e9f3fa 100%);
+      background: linear-gradient(145deg, #f0f7fd 0%, #e0eff8 100%);
       color: #153448;
       line-height: 1.5;
       padding: 1.5rem 1rem;
@@ -95,11 +95,11 @@
       font-weight: 600;
       font-size: 0.95rem;
       transition: all 0.2s;
-      cursor: default; /* not interactive in static prototype */
+      cursor: pointer;
     }
 
-    .btn-outline i {
-      margin-right: 6px;
+    .btn-outline:hover {
+      background: #e7f0f6;
     }
 
     .btn-primary {
@@ -115,10 +115,14 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      cursor: default;
+      cursor: pointer;
     }
 
-    /* hero section */
+    .btn-primary:hover {
+      background: #135e7a;
+    }
+
+    /* hero */
     .hero {
       display: flex;
       flex-wrap: wrap;
@@ -254,7 +258,6 @@
       font-weight: 700;
       font-size: 1.1rem;
       color: #07222c;
-      background-color: #f0f0f0; /* fallback */
     }
 
     .sos-sim {
@@ -288,7 +291,7 @@
       font-weight: 600;
     }
 
-    /* user journey cards */
+    /* interactive journey */
     .section-title {
       text-align: center;
       margin: 4rem 0 2rem;
@@ -300,30 +303,33 @@
       color: #0B3B4B;
     }
 
-    .section-title p {
-      font-size: 1.2rem;
-      color: #3d687b;
-      max-width: 650px;
-      margin: 0.5rem auto 0;
-    }
-
     .steps-container {
       display: flex;
       flex-wrap: wrap;
       gap: 1.8rem;
       justify-content: center;
-      margin-bottom: 3rem;
+      margin-bottom: 2rem;
     }
 
     .step-card {
       background: white;
       border-radius: 36px;
       padding: 2rem 1.5rem;
-      flex: 1 1 180px;
-      min-width: 180px;
+      flex: 1 1 160px;
+      min-width: 160px;
       box-shadow: 0 20px 30px -12px rgba(20, 80, 110, 0.2);
       border: 1px solid rgba(255,255,255,0.8);
-      transition: transform 0.15s;
+      transition: all 0.15s;
+      cursor: pointer;
+      position: relative;
+      border: 2px solid transparent;
+    }
+
+    .step-card.active-step {
+      border: 2px solid #1B6B8F;
+      background: #f6fbfe;
+      transform: scale(1.02);
+      box-shadow: 0 25px 30px -10px #1b6b8f80;
     }
 
     .step-number {
@@ -348,7 +354,8 @@
 
     .step-card p {
       color: #305f71;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
     }
 
     .tag {
@@ -361,10 +368,11 @@
       color: #115d7a;
     }
 
-    .risk-indicator {
+    .risk-indicator-horiz {
       display: flex;
       gap: 8px;
       margin: 1rem 0 0.5rem;
+      justify-content: center;
     }
     .risk-dot {
       width: 30px;
@@ -376,7 +384,59 @@
     .risk-dot.yellow { background: #f4b740; }
     .risk-dot.red { background: #e86b6b; }
 
-    /* tech & monetization row */
+    /* dynamic report panel */
+    .live-report {
+      background: #ffffffdd;
+      backdrop-filter: blur(4px);
+      border-radius: 48px;
+      padding: 2rem 2rem;
+      margin: 2rem 0 3rem;
+      border: 1px solid white;
+      box-shadow: 0 20px 30px -10px #0f3f5250;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .report-left h3 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .risk-box {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .risk-level-badge {
+      padding: 0.7rem 2rem;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      min-width: 160px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .risk-level-badge.low { background: #d7f0dc; color: #0e6230; }
+    .risk-level-badge.moderate { background: #feebc8; color: #985f13; }
+    .risk-level-badge.high { background: #ffe2e2; color: #aa3030; }
+
+    .next-step-message {
+      font-size: 1.2rem;
+      background: #e9f4fa;
+      padding: 0.8rem 2rem;
+      border-radius: 60px;
+    }
+
+    /* tech + monetization */
     .specials {
       display: flex;
       flex-wrap: wrap;
@@ -451,7 +511,12 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      cursor: default;
+      cursor: pointer;
+      transition: 0.15s;
+      border: none;
+    }
+    .btn-big:hover {
+      background: #f0f9ff;
     }
 
     footer {
@@ -471,16 +536,14 @@
       font-size: 1.4rem;
     }
 
-    /* responsiveness */
     @media (max-width: 600px) {
       .hero-content h2 { font-size: 2.5rem; }
-      .navbar { flex-direction: column; align-items: start; }
     }
   </style>
 </head>
 <body>
   <div class="page">
-    <!-- header / top CTA -->
+    <!-- header -->
     <div class="navbar">
       <div class="logo-area">
         <div class="logo-icon"><i class="fas fa-lungs"></i></div>
@@ -490,8 +553,8 @@
         </div>
       </div>
       <div class="cta-top">
-        <div class="btn-outline"><i class="fas fa-microphone-alt"></i> try demo</div>
-        <div class="btn-primary"><i class="fas fa-play"></i> start test</div>
+        <div class="btn-outline" id="demoButton"><i class="fas fa-microphone-alt"></i> try demo</div>
+        <div class="btn-primary" id="startTestButton"><i class="fas fa-play"></i> start test</div>
       </div>
     </div>
 
@@ -505,15 +568,6 @@
           <div class="feature-chip"><i class="fas fa-check-circle"></i>free basic exercises</div>
           <div class="feature-chip"><i class="fas fa-chart-line"></i>air quality alerts</div>
           <div class="feature-chip"><i class="fas fa-clock"></i>medication reminders</div>
-        </div>
-        <!-- risk indicator prototype -->
-        <div style="margin: 2rem 0 0.8rem; display: flex; gap: 20px; align-items: center;">
-          <div class="risk-indicator">
-            <span class="risk-dot green"></span>
-            <span class="risk-dot yellow"></span>
-            <span class="risk-dot red"></span>
-          </div>
-          <span style="font-weight:500;">instant AI risk report (green/yellow/red)</span>
         </div>
       </div>
       <div class="hero-visual">
@@ -540,19 +594,20 @@
       </div>
     </div>
 
-    <!-- user journey / how it works (5 steps with AI & questionnaire) -->
+    <!-- Interactive Journey: Step cards + dynamic AI report -->
     <div class="section-title">
-      <h3>how it works — 5‑minute journey</h3>
-      <p>voice recording + smart questionnaire → AI report + next steps</p>
+      <h3>⚡ interactive journey: click any step</h3>
+      <p>voice + questionnaire → AI generates live report & next steps</p>
     </div>
-    <div class="steps-container">
-      <div class="step-card">
+
+    <div class="steps-container" id="stepContainer">
+      <div class="step-card" data-step="1" id="step1">
         <div class="step-number">1</div>
         <h4>start test</h4>
         <p>clean UI · one tap to begin</p>
         <span class="tag"><i class="far fa-eye"></i> simple onboarding</span>
       </div>
-      <div class="step-card">
+      <div class="step-card" data-step="2" id="step2">
         <div class="step-number">2</div>
         <h4>voice & AI</h4>
         <p>record cough/breath, AI analyzes patterns</p>
@@ -560,34 +615,49 @@
           <div class="wave-bar" style="height:20px;"></div><div class="wave-bar" style="height:28px;"></div><div class="wave-bar" style="height:16px;"></div>
         </div>
       </div>
-      <div class="step-card">
+      <div class="step-card" data-step="3" id="step3">
         <div class="step-number">3</div>
         <h4>questionnaire</h4>
-        <p>symptoms, triggers & lifestyle factors</p>
+        <p>symptoms, triggers & lifestyle</p>
         <span class="tag"><i class="far fa-list-alt"></i> 2 min</span>
       </div>
-      <div class="step-card">
+      <div class="step-card" data-step="4" id="step4">
         <div class="step-number">4</div>
         <h4>AI report</h4>
-        <p>personalized risk level & insights</p>
-        <div class="risk-indicator">
+        <p>personalized risk & insights</p>
+        <div class="risk-indicator-horiz">
           <span class="risk-dot green"></span><span class="risk-dot yellow"></span><span class="risk-dot red"></span>
         </div>
       </div>
-      <div class="step-card">
+      <div class="step-card" data-step="5" id="step5">
         <div class="step-number">5</div>
         <h4>next steps</h4>
-        <p>low risk → lifestyle tips<br>moderate → track symptoms<br>high → consult doctor</p>
+        <p>recommendations based on risk</p>
       </div>
     </div>
 
-    <!-- data storage & future trends -->
+    <!-- Live AI report panel (changes on step click) -->
+    <div class="live-report" id="liveReport">
+      <div class="report-left">
+        <h3><i class="fas fa-robot" style="color:#1B6B8F;"></i> live AI report</h3>
+        <div class="risk-box">
+          <div class="risk-level-badge" id="riskBadge">🟢 low risk</div>
+          <div class="next-step-message" id="nextMsg">🌿 general lifestyle tips</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 20px;">
+        <div><i class="fas fa-chart-simple"></i> trend: stable</div>
+        <div><i class="fas fa-clock"></i> updated now</div>
+      </div>
+    </div>
+
+    <!-- data storage & trends (as per brief) -->
     <div style="background: white; border-radius: 48px; padding: 2.2rem; margin: 2rem 0; box-shadow: 0 20px 30px -10px #b7d9e9;">
       <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;">
         <div style="min-width: 200px;">
           <i class="fas fa-database" style="font-size: 3rem; color:#1B6B8F;"></i>
           <h3 style="font-size: 2rem; font-weight: 700;">store & track trends</h3>
-          <p>your data is saved for future analysis · AI learns from your feedback · charts show asthma evolution</p>
+          <p>your data saved for future analysis · AI learns from feedback · charts show asthma evolution</p>
         </div>
         <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
           <div><i class="fas fa-chart-pie" style="color:#1B6B8F;"></i> weekly pattern</div>
@@ -598,7 +668,7 @@
       </div>
     </div>
 
-    <!-- tech stack + monetization / premium -->
+    <!-- tech stack + monetization cards -->
     <div class="specials">
       <div class="card-glass">
         <i class="fas fa-cubes"></i>
@@ -630,10 +700,10 @@
         <h3>start breathing better today</h3>
         <p style="opacity:0.9;">free basic exercises · 60‑second AI check · no credit card</p>
       </div>
-      <div class="btn-big"><i class="fab fa-google-play"></i> coming soon to Play Store</div>
+      <div class="btn-big" id="playStoreBtn"><i class="fab fa-google-play"></i> coming soon to Play Store</div>
     </div>
 
-    <!-- footer / social proof -->
+    <!-- footer -->
     <footer>
       <div>© 2025 BreatheWell · AI asthma & breathing coach</div>
       <div class="footer-links">
@@ -644,7 +714,854 @@
       </div>
     </footer>
   </div>
-  <!-- small note: purely static UI prototype reflecting the project brief -->
+
+  <!-- interactive javascript: step journey changes report -->
+  <script>
+    (function() {
+      // Step cards
+      const steps = document.querySelectorAll('.step-card');
+      const riskBadge = document.getElementById('riskBadge');
+      const nextMsg = document.getElementById('nextMsg');
+
+      // mappings for each step (1-5)
+      const stepRiskMap = {
+        1: { risk: 'low', text: '🟢 low risk', msg: '🌿 ready to begin? tap "start test"' },
+        2: { risk: 'low', text: '🟢 low risk', msg: '🎙️ cough analysis: mild pattern · continue questionnaire' },
+        3: { risk: 'moderate', text: '🟡 moderate risk', msg: '📋 symptoms: occasional wheezing · consider tracking' },
+        4: { risk: 'high', text: '🔴 high risk', msg: '⚠️ AI report: increased variability · doctor consult recommended' },
+        5: { risk: 'high', text: '🔴 high risk', msg: '🫁 next steps: consult physician + use SOS if needed' }
+      };
+
+      function setActiveStep(activeStepNum) {
+        steps.forEach(step => {
+          const stepVal = parseInt(step.getAttribute('data-step'), 10);
+          if (stepVal === activeStepNum) {
+            step.classList.add('active-step');
+          } else {
+            step.classList.remove('active-step');
+          }
+        });
+
+        // update report based on step
+        const data = stepRiskMap[activeStepNum] || stepRiskMap[1];
+        riskBadge.innerText = data.text;
+        nextMsg.innerText = data.msg;
+
+        // change badge class for color
+        riskBadge.className = 'risk-level-badge';
+        if (data.risk === 'low') riskBadge.classList.add('low');
+        else if (data.risk === 'moderate') riskBadge.classList.add('moderate');
+        else if (data.risk === 'high') riskBadge.classList.add('high');
+      }
+
+      // click handlers
+      steps.forEach(step => {
+        step.addEventListener('click', function(e) {
+          const stepNum = parseInt(this.getAttribute('data-step'), 10);
+          setActiveStep(stepNum);
+        });
+      });
+
+      // default active step = 1
+      setActiveStep(1);
+
+      // extra: "start test" and "try demo" buttons also move to step 2 / 3
+      document.getElementById('startTestButton').addEventListener('click', function() {
+        setActiveStep(2);  // voice & AI step
+      });
+      document.getElementById('demoButton').addEventListener('click', function() {
+        setActiveStep(3);  // questionnaire demo
+      });
+      document.getElementById('playStoreBtn').addEventListener('click', function() {
+        alert('📱 BreatheWell will be available on Play Store soon! (MVP in 4-6 weeks)');
+      });
+
+      // additional micro-interaction: any step click also logs
+    })();
+  </script>
+  <!-- embedded explanation: 404 fixed, now interactive index.html -->
+</body>
+            </html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BreatheWell · interactive asthma coach prototype</title>
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(145deg, #f0f7fd 0%, #e0eff8 100%);
+      color: #153448;
+      line-height: 1.5;
+      padding: 1.5rem 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .page {
+      max-width: 1300px;
+      width: 100%;
+    }
+
+    /* header / navigation */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      background: #1B6B8F;
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 18px -8px rgba(20, 80, 120, 0.3);
+    }
+
+    .logo-icon i {
+      font-size: 2rem;
+      color: white;
+    }
+
+    .logo-text h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #0B3B4B;
+    }
+
+    .logo-text span {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #3C6E7E;
+      display: block;
+      line-height: 1.3;
+    }
+
+    .cta-top {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid #1B6B8F;
+      color: #1B6B8F;
+      padding: 0.6rem 1.5rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-outline:hover {
+      background: #e7f0f6;
+    }
+
+    .btn-primary {
+      background: #1B6B8F;
+      border: none;
+      color: white;
+      padding: 0.7rem 2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1rem;
+      box-shadow: 0 12px 22px -10px #1B6B8F;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: #135e7a;
+    }
+
+    /* hero */
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2.5rem;
+      align-items: center;
+      margin: 2rem 0 3.5rem;
+    }
+
+    .hero-content {
+      flex: 1 1 350px;
+    }
+
+    .hero-badge {
+      background: rgba(27, 107, 143, 0.12);
+      display: inline-block;
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1B6B8F;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-content h2 {
+      font-size: 3.2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -1.5px;
+      color: #07222c;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-highlight {
+      color: #1B6B8F;
+      border-bottom: 3px solid rgba(27, 107, 143, 0.3);
+    }
+
+    .hero-description {
+      font-size: 1.2rem;
+      color: #2b5567;
+      max-width: 550px;
+      margin-bottom: 2rem;
+    }
+
+    .feature-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 2rem 0 1rem;
+    }
+
+    .feature-chip {
+      background: white;
+      border-radius: 60px;
+      padding: 0.5rem 1.4rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      font-size: 1rem;
+      color: #1a4352;
+    }
+
+    .feature-chip i {
+      color: #1B6B8F;
+      font-size: 1.2rem;
+    }
+
+    .hero-visual {
+      flex: 1 1 350px;
+      background: linear-gradient(145deg, #ffffffd9, #f0f9ff);
+      border-radius: 48px;
+      padding: 2rem 1.8rem;
+      box-shadow: 0 40px 50px -25px rgba(20, 98, 128, 0.4);
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .visual-card {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .ai-wave {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .wave-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wave-bar {
+      width: 8px;
+      height: 40px;
+      background: #aad0e2;
+      border-radius: 20px;
+      animation: breathe 2.2s infinite ease-in-out;
+    }
+
+    .wave-bar:nth-child(2) { height: 60px; background: #1B6B8F; animation-delay: 0.2s; }
+    .wave-bar:nth-child(3) { height: 30px; animation-delay: 0.5s; }
+    .wave-bar:nth-child(4) { height: 55px; animation-delay: 0.1s; }
+    .wave-bar:nth-child(5) { height: 25px; background: #1B6B8F; animation-delay: 0.7s; }
+
+    @keyframes breathe {
+      0%, 100% { transform: scaleY(0.9); opacity: 0.7; }
+      50% { transform: scaleY(1.2); opacity: 1; background: #1f86af; }
+    }
+
+    .score-circle {
+      background: #e1f0f7;
+      border-radius: 60px;
+      padding: 0.5rem 1rem 0.5rem 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: conic-gradient(#2fa7d9 0deg 280deg, #cbe0ec 280deg 360deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #07222c;
+    }
+
+    .sos-sim {
+      display: flex;
+      justify-content: space-between;
+      background: #ffffffb3;
+      border-radius: 48px;
+      padding: 1rem 1.8rem;
+      align-items: center;
+      border: 1px solid white;
+    }
+
+    .sos-icon {
+      background: #ff5a5f;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.6rem;
+      box-shadow: 0 8px 14px #ff5a5f60;
+    }
+
+    .pill {
+      background: #deedf5;
+      padding: 0.4rem 1.4rem;
+      border-radius: 60px;
+      color: #11516d;
+      font-weight: 600;
+    }
+
+    /* interactive journey */
+    .section-title {
+      text-align: center;
+      margin: 4rem 0 2rem;
+    }
+
+    .section-title h3 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #0B3B4B;
+    }
+
+    .steps-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.8rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .step-card {
+      background: white;
+      border-radius: 36px;
+      padding: 2rem 1.5rem;
+      flex: 1 1 160px;
+      min-width: 160px;
+      box-shadow: 0 20px 30px -12px rgba(20, 80, 110, 0.2);
+      border: 1px solid rgba(255,255,255,0.8);
+      transition: all 0.15s;
+      cursor: pointer;
+      position: relative;
+      border: 2px solid transparent;
+    }
+
+    .step-card.active-step {
+      border: 2px solid #1B6B8F;
+      background: #f6fbfe;
+      transform: scale(1.02);
+      box-shadow: 0 25px 30px -10px #1b6b8f80;
+    }
+
+    .step-number {
+      background: #1B6B8F0c;
+      width: 48px;
+      height: 48px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.7rem;
+      color: #1B6B8F;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-card h4 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+    }
+
+    .step-card p {
+      color: #305f71;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #e5f2f9;
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #115d7a;
+    }
+
+    .risk-indicator-horiz {
+      display: flex;
+      gap: 8px;
+      margin: 1rem 0 0.5rem;
+      justify-content: center;
+    }
+    .risk-dot {
+      width: 30px;
+      height: 8px;
+      border-radius: 20px;
+      background: #ddd;
+    }
+    .risk-dot.green { background: #21b06d; }
+    .risk-dot.yellow { background: #f4b740; }
+    .risk-dot.red { background: #e86b6b; }
+
+    /* dynamic report panel */
+    .live-report {
+      background: #ffffffdd;
+      backdrop-filter: blur(4px);
+      border-radius: 48px;
+      padding: 2rem 2rem;
+      margin: 2rem 0 3rem;
+      border: 1px solid white;
+      box-shadow: 0 20px 30px -10px #0f3f5250;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .report-left h3 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .risk-box {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .risk-level-badge {
+      padding: 0.7rem 2rem;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      min-width: 160px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .risk-level-badge.low { background: #d7f0dc; color: #0e6230; }
+    .risk-level-badge.moderate { background: #feebc8; color: #985f13; }
+    .risk-level-badge.high { background: #ffe2e2; color: #aa3030; }
+
+    .next-step-message {
+      font-size: 1.2rem;
+      background: #e9f4fa;
+      padding: 0.8rem 2rem;
+      border-radius: 60px;
+    }
+
+    /* tech + monetization */
+    .specials {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin: 4rem 0;
+    }
+
+    .card-glass {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(4px);
+      border-radius: 40px;
+      padding: 2rem;
+      flex: 1 1 250px;
+      border: 1px solid #ffffff;
+      box-shadow: 0 20px 30px -10px #0f3f5250;
+    }
+
+    .card-glass i {
+      font-size: 2.4rem;
+      color: #1B6B8F;
+      margin-bottom: 1rem;
+    }
+
+    .card-glass h4 {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .price {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #1B6B8F;
+      margin: 0.5rem 0;
+    }
+
+    .badge-soon {
+      background: #0f3443;
+      color: white;
+      padding: 0.3rem 1.2rem;
+      border-radius: 60px;
+      display: inline-block;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    /* CTA banner */
+    .cta-banner {
+      background: #0b384b;
+      border-radius: 48px;
+      padding: 3rem 2.5rem;
+      color: white;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin: 3rem 0 2rem;
+    }
+
+    .cta-banner h3 {
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+
+    .btn-big {
+      background: white;
+      color: #0b384b;
+      padding: 1rem 3rem;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      box-shadow: 0 12px 20px -8px #00000030;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: 0.15s;
+      border: none;
+    }
+    .btn-big:hover {
+      background: #f0f9ff;
+    }
+
+    footer {
+      margin-top: 3rem;
+      color: #2e6073;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-top: 1px solid #a3c6d8;
+      padding-top: 2rem;
+    }
+
+    .footer-links i {
+      margin: 0 12px;
+      color: #1b6b8f;
+      font-size: 1.4rem;
+    }
+
+    @media (max-width: 600px) {
+      .hero-content h2 { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- header -->
+    <div class="navbar">
+      <div class="logo-area">
+        <div class="logo-icon"><i class="fas fa-lungs"></i></div>
+        <div class="logo-text">
+          <h1>BreatheWell</h1>
+          <span>AI-powered asthma & breathing coach</span>
+        </div>
+      </div>
+      <div class="cta-top">
+        <div class="btn-outline" id="demoButton"><i class="fas fa-microphone-alt"></i> try demo</div>
+        <div class="btn-primary" id="startTestButton"><i class="fas fa-play"></i> start test</div>
+      </div>
+    </div>
+
+    <!-- hero -->
+    <div class="hero">
+      <div class="hero-content">
+        <span class="hero-badge"><i class="fas fa-wave-square"></i> real‑time breath tracking</span>
+        <h2>Your personal <span class="hero-highlight">AI asthma coach</span> in one app</h2>
+        <p class="hero-description">Smart inhaler tracker · cough analysis · emergency SOS · daily breathing score</p>
+        <div class="feature-grid">
+          <div class="feature-chip"><i class="fas fa-check-circle"></i>free basic exercises</div>
+          <div class="feature-chip"><i class="fas fa-chart-line"></i>air quality alerts</div>
+          <div class="feature-chip"><i class="fas fa-clock"></i>medication reminders</div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="visual-card">
+          <div class="ai-wave">
+            <span style="font-weight:600; display:flex; gap:5px;"><i class="fas fa-microphone" style="color:#1B6B8F;"></i> live breath</span>
+            <div class="wave-group">
+              <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+            </div>
+          </div>
+          <div class="score-circle">
+            <div class="circle">82</div>
+            <span><strong>daily breathing score</strong> · mild variability</span>
+          </div>
+          <div class="sos-sim">
+            <div class="sos-icon"><i class="fas fa-exclamation"></i></div>
+            <span class="pill"><i class="fas fa-location-dot"></i> emergency SOS</span>
+            <span class="pill"><i class="fas fa-share-alt"></i> notify contact</span>
+          </div>
+          <div style="background:#f5fcff; border-radius:30px; padding:0.8rem 1.2rem; color:#074154;">
+            <i class="fas fa-cloud-sun" style="margin-right:8px;"></i> AQI 42 · good air quality
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Journey: Step cards + dynamic AI report -->
+    <div class="section-title">
+      <h3>⚡ interactive journey: click any step</h3>
+      <p>voice + questionnaire → AI generates live report & next steps</p>
+    </div>
+
+    <div class="steps-container" id="stepContainer">
+      <div class="step-card" data-step="1" id="step1">
+        <div class="step-number">1</div>
+        <h4>start test</h4>
+        <p>clean UI · one tap to begin</p>
+        <span class="tag"><i class="far fa-eye"></i> simple onboarding</span>
+      </div>
+      <div class="step-card" data-step="2" id="step2">
+        <div class="step-number">2</div>
+        <h4>voice & AI</h4>
+        <p>record cough/breath, AI analyzes patterns</p>
+        <div class="wave-group" style="margin: 0.5rem 0;">
+          <div class="wave-bar" style="height:20px;"></div><div class="wave-bar" style="height:28px;"></div><div class="wave-bar" style="height:16px;"></div>
+        </div>
+      </div>
+      <div class="step-card" data-step="3" id="step3">
+        <div class="step-number">3</div>
+        <h4>questionnaire</h4>
+        <p>symptoms, triggers & lifestyle</p>
+        <span class="tag"><i class="far fa-list-alt"></i> 2 min</span>
+      </div>
+      <div class="step-card" data-step="4" id="step4">
+        <div class="step-number">4</div>
+        <h4>AI report</h4>
+        <p>personalized risk & insights</p>
+        <div class="risk-indicator-horiz">
+          <span class="risk-dot green"></span><span class="risk-dot yellow"></span><span class="risk-dot red"></span>
+        </div>
+      </div>
+      <div class="step-card" data-step="5" id="step5">
+        <div class="step-number">5</div>
+        <h4>next steps</h4>
+        <p>recommendations based on risk</p>
+      </div>
+    </div>
+
+    <!-- Live AI report panel (changes on step click) -->
+    <div class="live-report" id="liveReport">
+      <div class="report-left">
+        <h3><i class="fas fa-robot" style="color:#1B6B8F;"></i> live AI report</h3>
+        <div class="risk-box">
+          <div class="risk-level-badge" id="riskBadge">🟢 low risk</div>
+          <div class="next-step-message" id="nextMsg">🌿 general lifestyle tips</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 20px;">
+        <div><i class="fas fa-chart-simple"></i> trend: stable</div>
+        <div><i class="fas fa-clock"></i> updated now</div>
+      </div>
+    </div>
+
+    <!-- data storage & trends (as per brief) -->
+    <div style="background: white; border-radius: 48px; padding: 2.2rem; margin: 2rem 0; box-shadow: 0 20px 30px -10px #b7d9e9;">
+      <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;">
+        <div style="min-width: 200px;">
+          <i class="fas fa-database" style="font-size: 3rem; color:#1B6B8F;"></i>
+          <h3 style="font-size: 2rem; font-weight: 700;">store & track trends</h3>
+          <p>your data saved for future analysis · AI learns from feedback · charts show asthma evolution</p>
+        </div>
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <div><i class="fas fa-chart-pie" style="color:#1B6B8F;"></i> weekly pattern</div>
+          <div><i class="fas fa-chart-line"></i> inhaler usage</div>
+          <div><i class="fas fa-cloud-sun-rain"></i> trigger history</div>
+          <span style="background:#deedf5; padding:0.5rem 2rem; border-radius:60px;"><i class="fa-regular fa-clock"></i> 4-6 weeks MVP</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- tech stack + monetization cards -->
+    <div class="specials">
+      <div class="card-glass">
+        <i class="fas fa-cubes"></i>
+        <h4>built fast</h4>
+        <ul style="list-style:none; margin-top:1rem;">
+          <li><i class="fas fa-angle-right" style="color:#1B6B8F;"></i> Flutter (frontend)</li>
+          <li><i class="fas fa-angle-right" style="color:#1B6B8F;"></i> Supabase backend</li>
+          <li><i class="fas fa-angle-right" style="color:#1B6B8F;"></i> Google Colab AI</li>
+        </ul>
+      </div>
+      <div class="card-glass">
+        <i class="fas fa-crown" style="color:#f9a826;"></i>
+        <h4>premium coach</h4>
+        <div class="price">$2.99<span style="font-size:1rem;">/mo</span></div>
+        <p>or one‑time $9.99 · unlock personalized breathing plans, AI insights, offline mode</p>
+        <span class="badge-soon"><i class="fas fa-bolt"></i> AdMob free version</span>
+      </div>
+      <div class="card-glass">
+        <i class="fas fa-hand-holding-heart"></i>
+        <h4>why it works</h4>
+        <p>✔ daily retention with exercises<br>✔ emergency SOS + wearables (soon)<br>✔ instant monetization</p>
+        <div style="margin-top:1.2rem;"><i class="fas fa-star" style="color: #f4b740;"></i> <i class="fas fa-star" style="color: #f4b740;"></i> <i class="fas fa-star" style="color: #f4b740;"></i> <i class="fas fa-star" style="color: #f4b740;"></i> <i class="fas fa-star-half-alt" style="color: #f4b740;"></i></div>
+      </div>
+    </div>
+
+    <!-- final cta banner -->
+    <div class="cta-banner">
+      <div>
+        <h3>start breathing better today</h3>
+        <p style="opacity:0.9;">free basic exercises · 60‑second AI check · no credit card</p>
+      </div>
+      <div class="btn-big" id="playStoreBtn"><i class="fab fa-google-play"></i> coming soon to Play Store</div>
+    </div>
+
+    <!-- footer -->
+    <footer>
+      <div>© 2025 BreatheWell · AI asthma & breathing coach</div>
+      <div class="footer-links">
+        <i class="fab fa-twitter"></i>
+        <i class="fab fa-github"></i>
+        <i class="fas fa-envelope"></i>
+        <span style="margin-left:1rem;"># opensource MVP</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- interactive javascript: step journey changes report -->
+  <script>
+    (function() {
+      // Step cards
+      const steps = document.querySelectorAll('.step-card');
+      const riskBadge = document.getElementById('riskBadge');
+      const nextMsg = document.getElementById('nextMsg');
+
+      // mappings for each step (1-5)
+      const stepRiskMap = {
+        1: { risk: 'low', text: '🟢 low risk', msg: '🌿 ready to begin? tap "start test"' },
+        2: { risk: 'low', text: '🟢 low risk', msg: '🎙️ cough analysis: mild pattern · continue questionnaire' },
+        3: { risk: 'moderate', text: '🟡 moderate risk', msg: '📋 symptoms: occasional wheezing · consider tracking' },
+        4: { risk: 'high', text: '🔴 high risk', msg: '⚠️ AI report: increased variability · doctor consult recommended' },
+        5: { risk: 'high', text: '🔴 high risk', msg: '🫁 next steps: consult physician + use SOS if needed' }
+      };
+
+      function setActiveStep(activeStepNum) {
+        steps.forEach(step => {
+          const stepVal = parseInt(step.getAttribute('data-step'), 10);
+          if (stepVal === activeStepNum) {
+            step.classList.add('active-step');
+          } else {
+            step.classList.remove('active-step');
+          }
+        });
+
+        // update report based on step
+        const data = stepRiskMap[activeStepNum] || stepRiskMap[1];
+        riskBadge.innerText = data.text;
+        nextMsg.innerText = data.msg;
+
+        // change badge class for color
+        riskBadge.className = 'risk-level-badge';
+        if (data.risk === 'low') riskBadge.classList.add('low');
+        else if (data.risk === 'moderate') riskBadge.classList.add('moderate');
+        else if (data.risk === 'high') riskBadge.classList.add('high');
+      }
+
+      // click handlers
+      steps.forEach(step => {
+        step.addEventListener('click', function(e) {
+          const stepNum = parseInt(this.getAttribute('data-step'), 10);
+          setActiveStep(stepNum);
+        });
+      });
+
+      // default active step = 1
+      setActiveStep(1);
+
+      // extra: "start test" and "try demo" buttons also move to step 2 / 3
+      document.getElementById('startTestButton').addEventListener('click', function() {
+        setActiveStep(2);  // voice & AI step
+      });
+      document.getElementById('demoButton').addEventListener('click', function() {
+        setActiveStep(3);  // questionnaire demo
+      });
+      document.getElementById('playStoreBtn').addEventListener('click', function() {
+        alert('📱 BreatheWell will be available on Play Store soon! (MVP in 4-6 weeks)');
+      });
+
+      // additional micro-interaction: any step click also logs
+    })();
+  </script>
+  <!-- embedded explanation: 404 fixed, now interactive index.html -->
 </body>
   </html>
- 
