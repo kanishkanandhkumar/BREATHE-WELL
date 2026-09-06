@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, X, Volume2, VolumeX, Lightbulb, ShieldAlert } from 'lucide-react';
+import { Play, Pause, RotateCcw, X, Volume2, VolumeX, Lightbulb, ShieldAlert, Wind, PauseCircle } from 'lucide-react';
 import apiRequest from '../lib/api';
 
 const BreathingTimer = ({ exercise, onClose }) => {
@@ -131,10 +131,10 @@ const BreathingTimer = ({ exercise, onClose }) => {
 
   const getPhaseLabel = () => {
     const labels = {
-      'inhale': '🌬️ Breathe In',
-      'exhale': '😮‍💨 Breathe Out',
-      'holdIn': '⏸️ Hold',
-      'holdOut': '⏸️ Hold'
+      'inhale': 'Breathe In',
+      'exhale': 'Breathe Out',
+      'holdIn': 'Hold',
+      'holdOut': 'Hold'
     };
     return labels[phase] || 'Breathe';
   };
@@ -190,7 +190,6 @@ const BreathingTimer = ({ exercise, onClose }) => {
     if (sessionTime > 0) {
       const session = {
         name: exercise.name,
-        emoji: exercise.emoji,
         duration: Math.max(1, Math.ceil(sessionTime / 60)),
         completed: cycleCount > 0,
         date: new Date().toISOString()
@@ -226,7 +225,7 @@ const BreathingTimer = ({ exercise, onClose }) => {
         <div className="flex justify-between items-center mb-6">
           <div className="min-w-0">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-              {exercise.emoji} {exercise.name}
+              {exercise.name}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {cycleCount} {cycleCount === 1 ? 'cycle' : 'cycles'} completed · {exercise.bestFor}
@@ -290,8 +289,8 @@ const BreathingTimer = ({ exercise, onClose }) => {
                 phase === 'inhale' ? 'scale-125' : 
                 phase === 'exhale' ? 'scale-75' : 'scale-100'
               }`}>
-                {phase === 'inhale' ? '🫁' : 
-                 phase === 'exhale' ? '💨' : '⏸️'}
+                {phase === 'inhale' ? <Wind className="h-16 w-16" /> :
+                 phase === 'exhale' ? <Wind className="h-16 w-16 rotate-180" /> : <PauseCircle className="h-16 w-16" />}
               </div>
               <div className="text-5xl font-bold text-gray-900 dark:text-white mb-1">
                 {timeLeft}

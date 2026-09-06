@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Moon, Sun, Heart, Wind } from 'lucide-react';
+import { Menu, X, Moon, Sun, Heart, Wind, Home as HomeIcon, Activity, BarChart3, History } from 'lucide-react';
 
 const Header = ({ darkMode, toggleDarkMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,9 +11,9 @@ const Header = ({ darkMode, toggleDarkMode }) => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <div className="relative">
-              <span className="text-3xl animate-float">🌬️</span>
-              <Heart className="absolute -top-1 -right-1 w-4 h-4 text-red-500 animate-pulse" fill="currentColor" />
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-lg shadow-primary-600/25">
+              <Wind className="h-6 w-6 animate-float" />
+              <Heart className="absolute -right-1 -top-1 h-4 w-4 text-secondary-400" fill="currentColor" />
             </div>
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
@@ -67,19 +67,19 @@ const Header = ({ darkMode, toggleDarkMode }) => {
           <div className="md:hidden py-4 border-t border-gray-200 dark:border-gray-700 animate-slideDown">
             <div className="flex flex-col space-y-3">
               <Link to="/" className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-                🏠 Home
+                <HomeIcon className="mr-2 inline h-4 w-4" /> Home
               </Link>
               <Link to="/exercises" className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-                🫁 Exercises
+                <Wind className="mr-2 inline h-4 w-4" /> Exercises
               </Link>
               <Link to="/tracker" className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-                📊 Tracker
+                <Activity className="mr-2 inline h-4 w-4" /> Tracker
               </Link>
               <Link to="/dashboard" className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-                📈 Dashboard
+                <BarChart3 className="mr-2 inline h-4 w-4" /> Dashboard
               </Link>
               <Link to="/history" className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
-                📜 History
+                <History className="mr-2 inline h-4 w-4" /> History
               </Link>
             </div>
           </div>

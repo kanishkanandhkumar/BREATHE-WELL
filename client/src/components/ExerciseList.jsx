@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ExerciseCard from './ExerciseCard';
 import BreathingTimer from './BreathingTimer';
-import { HeartPulse, ShieldCheck, Sparkles } from 'lucide-react';
+import { HeartPulse, ShieldCheck, Sparkles, Wind, Waves, Square, Moon, CircleDot, Dumbbell } from 'lucide-react';
 
 const exercises = [
   {
@@ -13,7 +13,7 @@ const exercises = [
     cue: 'Let your belly rise gently as you inhale.',
     difficulty: 'Beginner',
     duration: '5 min',
-    emoji: '🫁',
+    icon: Wind,
     color: '#48bb78'
   },
   {
@@ -25,7 +25,7 @@ const exercises = [
     cue: 'Breathe out as if cooling a warm drink.',
     difficulty: 'Beginner',
     duration: '5 min',
-    emoji: '💨',
+    icon: Waves,
     color: '#4299e1'
   },
   {
@@ -37,7 +37,7 @@ const exercises = [
     cue: 'Keep every side of the “box” the same length.',
     difficulty: 'Intermediate',
     duration: '8 min',
-    emoji: '📦',
+    icon: Square,
     color: '#ed8936'
   },
   {
@@ -49,7 +49,7 @@ const exercises = [
     cue: 'Keep the breath comfortable; never force the holds.',
     difficulty: 'Advanced',
     duration: '10 min',
-    emoji: '😌',
+    icon: Moon,
     color: '#9f7aea'
   },
   {
@@ -61,7 +61,7 @@ const exercises = [
     cue: 'Move slowly and keep your shoulders relaxed.',
     difficulty: 'Intermediate',
     duration: '8 min',
-    emoji: '🧘',
+    icon: CircleDot,
     color: '#f6ad55'
   },
   {
@@ -73,7 +73,7 @@ const exercises = [
     cue: 'Stop if you feel strain, dizziness, or discomfort.',
     difficulty: 'Advanced',
     duration: '10 min',
-    emoji: '💪',
+    icon: Dumbbell,
     color: '#fc8181'
   }
 ];

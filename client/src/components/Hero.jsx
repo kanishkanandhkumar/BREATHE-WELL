@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Activity, Clock, Award } from 'lucide-react';
+import { ArrowRight, Activity, Clock, Award, Wind, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Hero = () => {
@@ -27,7 +27,7 @@ const Hero = () => {
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-primary-500"></span>
               </span>
               <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
-                🌟 Trusted by 10,000+ Asthma Patients
+                <ShieldCheck className="mr-1 inline h-4 w-4" /> Built for calmer daily routines
               </span>
             </div>
 
@@ -85,7 +85,7 @@ const Hero = () => {
                      style={{ transform: `scale(${scale > 1 ? 0.8 : 1.2})` }}>
                   {/* Center Icon */}
                   <div className="text-center">
-                    <div className="text-6xl md:text-7xl">{isInhaling ? '😮‍💨' : '😌'}</div>
+                    <Wind className={`mx-auto h-16 w-16 text-primary-600 transition-transform duration-1000 ${isInhaling ? 'scale-110' : 'scale-90'}`} />
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mt-2">
                       {isInhaling ? 'Breathe In' : 'Breathe Out'}
                     </p>

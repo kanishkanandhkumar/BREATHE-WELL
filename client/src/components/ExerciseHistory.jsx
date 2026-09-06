@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { History, Calendar, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { History, Calendar, Clock, CheckCircle, XCircle, Wind } from 'lucide-react';
 import apiRequest from '../lib/api';
 
 const ExerciseHistory = () => {
@@ -53,7 +53,9 @@ const ExerciseHistory = () => {
               className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <span className="text-2xl">{session.emoji || '🫁'}</span>
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300">
+                  <Wind className="h-5 w-5" />
+                </span>
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white">
                     {session.name}

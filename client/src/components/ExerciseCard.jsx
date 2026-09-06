@@ -17,8 +17,8 @@ const ExerciseCard = ({ exercise, onStart }) => {
       <div className="p-6">
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl" style={{ backgroundColor: `${exercise.color}22` }}>
-              {exercise.emoji}
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style={{ backgroundColor: `${exercise.color}22` }}>
+              <exercise.icon className="h-6 w-6" style={{ color: exercise.color }} />
             </div>
             <div>
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Activity, Wind, Droplets, Pill, AlertCircle, Check } from 'lucide-react';
+import { Calendar, Activity, Wind, Droplets, Pill, AlertCircle, Check, Smile, Meh, Frown, FileText } from 'lucide-react';
 import apiRequest from '../lib/api';
 
 const SymptomTracker = () => {
@@ -79,15 +79,16 @@ const SymptomTracker = () => {
     }
   };
 
-  const getFeelingEmoji = () => {
-    const emojis = {
-      'great': '😊',
-      'good': '🙂',
-      'neutral': '😐',
-      'bad': '😟',
-      'terrible': '😰'
+  const getFeelingIcon = (level = symptoms.feeling) => {
+    const icons = {
+      great: Smile,
+      good: Smile,
+      neutral: Meh,
+      bad: Frown,
+      terrible: Frown
     };
-    return emojis[symptoms.feeling] || '😐';
+    const Icon = icons[level] || Meh;
+    return <Icon className="h-6 w-6" />;
   };
 
   return (
@@ -104,7 +105,7 @@ const SymptomTracker = () => {
           <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 text-center animate-fadeIn">
             <Check className="w-12 h-12 text-green-600 mx-auto mb-3" />
             <h3 className="text-xl font-semibold text-green-600 dark:text-green-400">
-              Logged Successfully! 🎉
+              Logged Successfully
             </h3>
             <p className="text-green-500 dark:text-green-300">
               Keep up the great work tracking your health!
@@ -116,7 +117,7 @@ const SymptomTracker = () => {
             {/* Date */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                📅 Date
+                <Calendar className="mr-1 inline h-4 w-4" /> Date
               </label>
               <input
                 type="date"
@@ -131,7 +132,7 @@ const SymptomTracker = () => {
             {/* How are you feeling? */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                😊 How are you feeling today?
+                <Activity className="mr-1 inline h-4 w-4" /> How are you feeling today?
               </label>
               <div className="flex gap-2">
                 {['great', 'good', 'neutral', 'bad', 'terrible'].map(level => (
@@ -145,11 +146,7 @@ const SymptomTracker = () => {
                         : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
                     }`}
                   >
-                    {level === 'great' && '😊'}
-                    {level === 'good' && '🙂'}
-                    {level === 'neutral' && '😐'}
-                    {level === 'bad' && '😟'}
-                    {level === 'terrible' && '😰'}
+                    {getFeelingIcon(level)}
                   </button>
                 ))}
               </div>
@@ -241,7 +238,7 @@ const SymptomTracker = () => {
             {/* Peak Flow */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                🌬️ Peak Flow Reading (L/min)
+                <Wind className="mr-1 inline h-4 w-4" /> Peak Flow Reading (L/min)
               </label>
               <input
                 type="number"
@@ -278,7 +275,7 @@ const SymptomTracker = () => {
             {/* Medications */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                💊 Medications Used Today
+                <Pill className="mr-1 inline h-4 w-4" /> Medications Used Today
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {medicationOptions.map(med => (
@@ -300,7 +297,7 @@ const SymptomTracker = () => {
             {/* Notes */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                📝 Notes
+                <FileText className="mr-1 inline h-4 w-4" /> Notes
               </label>
               <textarea
                 name="notes"

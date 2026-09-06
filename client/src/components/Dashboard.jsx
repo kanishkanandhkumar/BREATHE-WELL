@@ -191,7 +191,7 @@ const Dashboard = () => {
         {/* Symptom Trends */}
         <div className="card p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            📈 Symptom Trends
+            Symptom Trends
           </h3>
           <Line 
             data={symptomData}
@@ -217,7 +217,7 @@ const Dashboard = () => {
         {/* Exercise Distribution */}
         <div className="card p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            🏋️ Exercise Distribution
+            Exercise Distribution
           </h3>
           <Bar 
             data={exerciseData}
@@ -240,7 +240,7 @@ const Dashboard = () => {
         {/* Radar Chart */}
         <div className="card p-6 md:col-span-2">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            🎯 Skill Assessment
+            Skill Assessment
           </h3>
           <div className="max-w-md mx-auto">
             <Radar 
