@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Moon, Sun, User, Bell, Heart, LogOut } from 'lucide-react';
+import { Menu, X, Moon, Sun, Heart, Wind } from 'lucide-react';
 
-const Header = ({ darkMode, toggleDarkMode, onLogout }) => {
+const Header = ({ darkMode, toggleDarkMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -49,18 +49,9 @@ const Header = ({ darkMode, toggleDarkMode, onLogout }) => {
               {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
 
-            <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-            </button>
-
-            <button
-              onClick={onLogout}
-              className="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors text-red-500 hover:text-red-600"
-              aria-label="Logout"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
+            <div className="hidden items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5 text-xs font-semibold text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 sm:flex">
+              <Wind className="h-3.5 w-3.5" /> Demo mode
+            </div>
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -90,15 +81,6 @@ const Header = ({ darkMode, toggleDarkMode, onLogout }) => {
               <Link to="/history" className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors" onClick={() => setIsMenuOpen(false)}>
                 📜 History
               </Link>
-              <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  if (onLogout) onLogout();
-                }}
-                className="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-left"
-              >
-                🚪 Logout
-              </button>
             </div>
           </div>
         )}

@@ -7,12 +7,11 @@ import ExerciseList from './components/ExerciseList';
 import SymptomTracker from './components/SymptomTracker';
 import Home from './pages/Home';
 
-const ProtectedLayout = ({ darkMode, toggleDarkMode, onLogout }) => (
+const ProtectedLayout = ({ darkMode, toggleDarkMode }) => (
   <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
     <Header
       darkMode={darkMode}
       toggleDarkMode={toggleDarkMode}
-      onLogout={onLogout}
     />
     <main>
       <Routes>
@@ -48,7 +47,6 @@ function App() {
       <ProtectedLayout
         darkMode={darkMode}
         toggleDarkMode={() => setDarkMode((current) => !current)}
-        onLogout={() => localStorage.clear()}
       />
     </HashRouter>
   );

@@ -12,6 +12,9 @@ const BreathingTimer = ({ exercise, onClose }) => {
   
   const timerRef = useRef(null);
   const audioContextRef = useRef(null);
+  const phaseDeadlineRef = useRef(null);
+  const startedAtRef = useRef(null);
+  const totalTimeBaseRef = useRef(0);
 
   // Breathing pattern based on exercise
   const getBreathPattern = (exerciseId) => {
@@ -79,34 +82,30 @@ const BreathingTimer = ({ exercise, onClose }) => {
   // Timer logic
   useEffect(() => {
     if (isRunning) {
+      phaseDeadlineRef.current = Date.now() + (timeLeft * 1000);
+      startedAtRef.current = startedAtRef.current || Date.now();
       timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev > 1) {
-            return prev - 1;
-          } else {
-            // Phase complete - move to next phase
-            playSound(phase === 'inhale' ? 'exhale' : 'inhale');
-            
-            const nextPhase = getNextPhase(phase);
-            setPhase(nextPhase);
-            const newTime = getPhaseDuration(nextPhase);
-            
-            // Check if cycle complete
-            if (nextPhase === 'inhale' && phase === 'holdOut') {
-              setCycleCount((prevCount) => {
-                const newCount = prevCount + 1;
-                if (newCount % 5 === 0) {
-                  playSound('complete');
-                }
-                return newCount;
-              });
-            }
-            
-            setTotalTime((prev) => prev + 1);
-            return newTime;
-          }
-        });
-      }, 1000);
+        const now = Date.now();
+        const elapsed = Math.floor((now - startedAtRef.current) / 1000);
+        setTotalTime(totalTimeBaseRef.current + elapsed);
+        if (now < phaseDeadlineRef.current) {
+          setTimeLeft(Math.ceil((phaseDeadlineRef.current - now) / 1000));
+          return;
+        }
+
+        const nextPhase = getNextPhase(phase);
+        playSound(nextPhase === 'inhale' ? 'inhale' : nextPhase === 'exhale' ? 'exhale' : 'hold');
+        setPhase(nextPhase);
+        phaseDeadlineRef.current = now + (getPhaseDuration(nextPhase) * 1000);
+        setTimeLeft(getPhaseDuration(nextPhase));
+        if (nextPhase === 'inhale' && phase === 'holdOut') {
+          setCycleCount((prevCount) => {
+            const newCount = prevCount + 1;
+            if (newCount % 5 === 0) playSound('complete');
+            return newCount;
+          });
+        }
+      }, 100);
     } else {
       clearInterval(timerRef.current);
     }
@@ -158,7 +157,17 @@ const BreathingTimer = ({ exercise, onClose }) => {
       }
       playSound('inhale');
     }
-    setIsRunning(!isRunning);
+    if (!isRunning) {
+      phaseDeadlineRef.current = Date.now() + (timeLeft * 1000);
+      startedAtRef.current = Date.now();
+    } else {
+      totalTimeBaseRef.current += startedAtRef.current
+        ? Math.floor((Date.now() - startedAtRef.current) / 1000)
+        : 0;
+      startedAtRef.current = null;
+      phaseDeadlineRef.current = null;
+    }
+    setIsRunning((current) => !current);
   };
 
   const resetTimer = () => {
@@ -167,15 +176,22 @@ const BreathingTimer = ({ exercise, onClose }) => {
     setTimeLeft(pattern.inhale);
     setCycleCount(0);
     setTotalTime(0);
+    totalTimeBaseRef.current = 0;
+    startedAtRef.current = null;
+    phaseDeadlineRef.current = null;
     clearInterval(timerRef.current);
   };
 
   const closeTimer = () => {
-    if (totalTime > 0) {
+    setIsRunning(false);
+    clearInterval(timerRef.current);
+    const sessionTime = totalTimeBaseRef.current
+      + (startedAtRef.current ? Math.floor((Date.now() - startedAtRef.current) / 1000) : totalTime);
+    if (sessionTime > 0) {
       const session = {
         name: exercise.name,
         emoji: exercise.emoji,
-        duration: Math.max(1, Math.ceil(totalTime / 60)),
+        duration: Math.max(1, Math.ceil(sessionTime / 60)),
         completed: cycleCount > 0,
         date: new Date().toISOString()
       };
@@ -194,8 +210,13 @@ const BreathingTimer = ({ exercise, onClose }) => {
   // Progress calculation
   const progress = () => {
     const total = pattern.inhale + pattern.holdIn + pattern.exhale + pattern.holdOut;
-    const current = getPhaseDuration(phase);
-    return ((total - timeLeft) / total) * 100;
+    const phaseStart = {
+      inhale: 0,
+      holdIn: pattern.inhale,
+      exhale: pattern.inhale + pattern.holdIn,
+      holdOut: pattern.inhale + pattern.holdIn + pattern.exhale
+    }[phase] || 0;
+    return ((phaseStart + getPhaseDuration(phase) - timeLeft) / total) * 100;
   };
 
   return (

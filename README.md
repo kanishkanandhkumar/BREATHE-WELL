@@ -5,48 +5,16 @@ symptom tracking, exercise history, and progress charts.
 
 ## Run locally
 
-1. Start MongoDB with Docker:
-
-   ```bash
-   docker run -d --name breathe-well-mongodb --restart unless-stopped \
-     -p 27017:27017 -v breathe-well-mongodb-data:/data/db mongo:7
-   ```
-
-   If the container already exists, use `docker start breathe-well-mongodb`.
-
-2. Confirm `server/.env` contains a real `JWT_SECRET`.
-3. Install dependencies:
-
-   ```bash
-   npm run install:all
-   ```
-
-4. Start the client and API:
-
-   ```bash
-   npm run dev
-   ```
-
-The frontend runs at `http://localhost:5173` and the API runs at
-`http://localhost:5000`.
-
-To stop MongoDB without deleting its data:
+The demo is a self-contained Vite app. No database, backend, account, or
+environment variables are required.
 
 ```bash
-docker stop breathe-well-mongodb
+npm --prefix client install
+npm --prefix client run dev
 ```
 
-## Current API
-
-- `POST /api/auth/register` - create an account
-- `POST /api/auth/login` - receive a JWT
-- `GET /api/auth/me` - validate the current session
-- `GET /api/symptoms` and `POST /api/symptoms` - manage symptom logs
-- `GET /api/exercise-sessions` and `POST /api/exercise-sessions` - manage exercise history
-- `GET /api/health` - check API and database status
-
-The browser stores only the JWT and basic profile information. Symptoms and
-exercise sessions are persisted per user in MongoDB.
+Open `http://localhost:5173`. Data is stored locally in the browser, so each
+browser/device has its own demo history.
 
 ## GitHub Pages demo deployment
 
