@@ -19,13 +19,16 @@ export const authApi = {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } }
+      options: {
+        data: { name },
+        emailRedirectTo: window.location.origin
+      }
     });
     if (error) throw error;
     if (!data.user) throw new Error('Could not create account');
-    if (!data.session) throw new Error('Account created. Check your email to confirm your account before signing in.');
     return {
-      token: data.session.access_token,
+      token: data.session?.access_token,
+      requiresEmailConfirmation: !data.session,
       user: { id: data.user.id, name, email: data.user.email }
     };
   },
