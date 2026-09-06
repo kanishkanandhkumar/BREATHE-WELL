@@ -1,67 +1,44 @@
-import { supabase } from './supabase';
+const read = (key) => JSON.parse(localStorage.getItem(key) || '[]');
+const write = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 
-const getUser = async () => {
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) throw new Error('Authentication required');
-  return data.user;
+const getCurrentUser = () => {
+  const user = JSON.parse(localStorage.getItem('breatheWellUser') || 'null');
+  if (!user) throw new Error('Authentication required');
+  return user;
 };
 
 export const authApi = {
   login: async ({ email, password }) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    return {
-      token: data.session?.access_token,
-      user: { id: data.user.id, name: data.user.user_metadata.name || email.split('@')[0], email: data.user.email }
-    };
+    const user = read('breatheWellAccounts').find(
+      (account) => account.email === email.toLowerCase() && account.password === password
+    );
+    if (!user) throw new Error('Email or password is incorrect');
+    return { token: 'local-demo-session', user: { id: user.id, name: user.name, email: user.email } };
   },
   register: async ({ name, email, password }) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { name },
-        emailRedirectTo: window.location.origin
-      }
-    });
-    if (error) throw error;
-    if (!data.user) throw new Error('Could not create account');
-    return {
-      token: data.session?.access_token,
-      requiresEmailConfirmation: !data.session,
-      user: { id: data.user.id, name, email: data.user.email }
-    };
+    const accounts = read('breatheWellAccounts');
+    const normalizedEmail = email.toLowerCase();
+    if (accounts.some((account) => account.email === normalizedEmail)) {
+      throw new Error('An account with this email already exists');
+    }
+    const user = { id: crypto.randomUUID(), name: name.trim(), email: normalizedEmail, password };
+    write('breatheWellAccounts', [...accounts, user]);
+    return { token: 'local-demo-session', user: { id: user.id, name: user.name, email: user.email } };
   },
-  me: async () => {
-    const user = await getUser();
-    return { user: { id: user.id, name: user.user_metadata.name || user.email.split('@')[0], email: user.email } };
-  }
+  me: async () => ({ user: getCurrentUser() })
 };
 
 export const apiRequest = async (path, options = {}) => {
-  const user = await getUser();
-  const body = options.body ? JSON.parse(options.body) : {};
-  const table = path === '/symptoms' ? 'symptoms' : 'exercise_sessions';
-  if (path === '/symptoms' && options.method === 'POST') {
-    const { chestTightness, ...rest } = body;
-    const { data, error } = await supabase.from(table).insert({
-      ...rest,
-      chest_tightness: chestTightness,
-      user_id: user.id
-    }).select().single();
-    if (error) throw error;
-    return { ...data, chestTightness: data.chest_tightness };
+  const user = getCurrentUser();
+  const key = path === '/symptoms' ? 'symptomLogs' : 'exerciseSessions';
+  const records = read(key);
+  if (options.method === 'POST') {
+    const body = JSON.parse(options.body || '{}');
+    const record = { ...body, userId: user.id, id: crypto.randomUUID(), timestamp: new Date().toISOString() };
+    write(key, [...records, record]);
+    return record;
   }
-  if (path === '/exercise-sessions' && options.method === 'POST') {
-    const { data, error } = await supabase.from(table).insert({ ...body, user_id: user.id }).select().single();
-    if (error) throw error;
-    return data;
-  }
-  const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending: false }).limit(100);
-  if (error) throw error;
-  return table === 'symptoms'
-    ? data.map((item) => ({ ...item, chestTightness: item.chest_tightness }))
-    : data;
+  return records.filter((record) => !record.userId || record.userId === user.id).reverse().slice(0, 100);
 };
 
 export default apiRequest;

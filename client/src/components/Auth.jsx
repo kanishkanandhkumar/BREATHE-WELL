@@ -13,7 +13,6 @@ const Auth = ({ onLogin }) => {
   });
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
-  const [confirmationRequired, setConfirmationRequired] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -49,11 +48,8 @@ const Auth = ({ onLogin }) => {
         ? await authApi.login({ email: formData.email, password: formData.password })
         : await authApi.register({ name: formData.name, email: formData.email, password: formData.password });
       setSuccess(true);
-      setConfirmationRequired(Boolean(response.requiresEmailConfirmation));
-      if (response.token) {
-        localStorage.setItem('breatheWellToken', response.token);
-        setTimeout(() => onLogin(response.user), 700);
-      }
+      localStorage.setItem('breatheWellToken', response.token);
+      setTimeout(() => onLogin(response.user), 700);
     } catch (error) {
       setErrors({ form: error.message });
     } finally {
@@ -80,15 +76,8 @@ const Auth = ({ onLogin }) => {
             <p className="text-green-600 dark:text-green-400 font-semibold">
               {isLogin
                 ? 'Welcome back!'
-                : confirmationRequired
-                  ? 'Account created — check your email'
-                  : 'Account created successfully!'}
+                : 'Account created successfully!'}
             </p>
-            {confirmationRequired && (
-              <p className="mt-2 text-sm text-green-600 dark:text-green-300">
-                Open the confirmation link, then return here and sign in.
-              </p>
-            )}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
