@@ -60,8 +60,10 @@ Recommended hosting:
 
 Create a Supabase project, open **SQL Editor**, and run
 [`supabase/schema.sql`](./supabase/schema.sql). In **Authentication → Providers**,
-enable Email. For quick beta testing, disable email confirmation; otherwise
-testers must confirm their email before signing in.
+enable Email. For this beta, turn off **Confirm email** under
+**Authentication → Providers → Email**. Users can then sign up and sign in
+immediately with email and password, without waiting for an email link. Turn
+this back on before production launch.
 
 Add these variables to Vercel:
 
