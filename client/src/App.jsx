@@ -8,6 +8,7 @@ import ExerciseList from './components/ExerciseList';
 import SymptomTracker from './components/SymptomTracker';
 import Home from './pages/Home';
 import { authApi } from './lib/api';
+import { supabase } from './lib/supabase';
 
 const ProtectedLayout = ({ darkMode, toggleDarkMode, onLogout }) => (
   <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -45,9 +46,7 @@ function App() {
       return null;
     }
   });
-  const [checkingSession, setCheckingSession] = useState(
-    () => Boolean(localStorage.getItem('breatheWellToken'))
-  );
+  const [checkingSession, setCheckingSession] = useState(true);
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem('breatheWellDarkMode') === 'true'
   );
@@ -69,6 +68,16 @@ function App() {
       .finally(() => setCheckingSession(false));
   }, [checkingSession]);
 
+  useEffect(() => {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        setUser(null);
+        localStorage.removeItem('breatheWellUser');
+      }
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
   const handleLogin = (nextUser) => {
     localStorage.setItem('breatheWellUser', JSON.stringify(nextUser));
     setUser(nextUser);
@@ -77,6 +86,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('breatheWellToken');
     localStorage.removeItem('breatheWellUser');
+    supabase.auth.signOut();
     setUser(null);
   };
 

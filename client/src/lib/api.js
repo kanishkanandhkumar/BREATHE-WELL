@@ -1,24 +1,64 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { supabase } from './supabase';
 
-export const apiRequest = async (path, options = {}) => {
-  const token = localStorage.getItem('breatheWellToken');
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers
-    }
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.message || 'Request failed');
-  return data;
+const getUser = async () => {
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) throw new Error('Authentication required');
+  return data.user;
 };
 
 export const authApi = {
-  login: (payload) => apiRequest('/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
-  register: (payload) => apiRequest('/auth/register', { method: 'POST', body: JSON.stringify(payload) }),
-  me: () => apiRequest('/auth/me')
+  login: async ({ email, password }) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    return {
+      token: data.session?.access_token,
+      user: { id: data.user.id, name: data.user.user_metadata.name || email.split('@')[0], email: data.user.email }
+    };
+  },
+  register: async ({ name, email, password }) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name } }
+    });
+    if (error) throw error;
+    if (!data.user) throw new Error('Could not create account');
+    if (!data.session) throw new Error('Account created. Check your email to confirm your account before signing in.');
+    return {
+      token: data.session.access_token,
+      user: { id: data.user.id, name, email: data.user.email }
+    };
+  },
+  me: async () => {
+    const user = await getUser();
+    return { user: { id: user.id, name: user.user_metadata.name || user.email.split('@')[0], email: user.email } };
+  }
+};
+
+export const apiRequest = async (path, options = {}) => {
+  const user = await getUser();
+  const body = options.body ? JSON.parse(options.body) : {};
+  const table = path === '/symptoms' ? 'symptoms' : 'exercise_sessions';
+  if (path === '/symptoms' && options.method === 'POST') {
+    const { chestTightness, ...rest } = body;
+    const { data, error } = await supabase.from(table).insert({
+      ...rest,
+      chest_tightness: chestTightness,
+      user_id: user.id
+    }).select().single();
+    if (error) throw error;
+    return { ...data, chestTightness: data.chest_tightness };
+  }
+  if (path === '/exercise-sessions' && options.method === 'POST') {
+    const { data, error } = await supabase.from(table).insert({ ...body, user_id: user.id }).select().single();
+    if (error) throw error;
+    return data;
+  }
+  const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending: false }).limit(100);
+  if (error) throw error;
+  return table === 'symptoms'
+    ? data.map((item) => ({ ...item, chestTightness: item.chest_tightness }))
+    : data;
 };
 
 export default apiRequest;

@@ -52,16 +52,32 @@ exercise sessions are persisted per user in MongoDB.
 
 Recommended hosting:
 
-- MongoDB Atlas: production database
-- Render: Node/Express API
+- Supabase: authentication and PostgreSQL database
 - Vercel: React/Vite frontend
 
-### 1. MongoDB Atlas
+### 1. Supabase
 
-Create a free Atlas cluster, create a database user, and copy the connection
-string. Replace the password and database name in the connection string.
+Create a Supabase project, open **SQL Editor**, and run
+[`supabase/schema.sql`](./supabase/schema.sql). In **Authentication → Providers**,
+enable Email. For quick beta testing, disable email confirmation; otherwise
+testers must confirm their email before signing in.
 
-### 2. Render API
+Add these variables to Vercel:
+
+```text
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+```
+
+The publishable key is intended for frontend use. Never expose a Supabase
+service-role key.
+
+### 2. Optional legacy Render API
+
+The Express/MongoDB API remains available for local use, but the frontend now
+uses Supabase directly for authentication and application data.
+
+Create a new Web Service from this repository:
 
 Create a new Web Service from this repository. The included [`render.yaml`](./render.yaml)
 can be used as a Blueprint, or configure these values manually:
@@ -94,12 +110,5 @@ The response should report `"database": "connected"`.
 ### 3. Vercel frontend
 
 Import the repository into Vercel and set the project root directory to
-`client`. Vercel detects Vite automatically. Add this environment variable:
-
-```text
-VITE_API_URL=https://<your-render-domain>/api
-```
-
-Deploy the frontend, then copy its production URL into Render's `CLIENT_URL`
-and redeploy the API. The `client/vercel.json` rewrite keeps React Router
-routes working on refresh.
+`client`. Vercel detects Vite automatically. Add the Supabase variables above.
+The `client/vercel.json` rewrite keeps React Router routes working on refresh.
