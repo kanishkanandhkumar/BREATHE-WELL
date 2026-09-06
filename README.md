@@ -53,7 +53,7 @@ exercise sessions are persisted per user in MongoDB.
 Recommended hosting:
 
 - Supabase: authentication and PostgreSQL database
-- Vercel: React/Vite frontend
+- Netlify: React/Vite frontend
 
 ### 1. Supabase
 
@@ -107,8 +107,22 @@ https://<your-render-domain>/api/health
 
 The response should report `"database": "connected"`.
 
-### 3. Vercel frontend
+### 3. Netlify frontend
 
-Import the repository into Vercel and set the project root directory to
-`client`. Vercel detects Vite automatically. Add the Supabase variables above.
-The `client/vercel.json` rewrite keeps React Router routes working on refresh.
+Import the repository into Netlify and use:
+
+```text
+Base directory: client
+Build command: npm run build
+Publish directory: dist
+```
+
+Add these environment variables:
+
+```text
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+```
+
+The included [`netlify.toml`](./netlify.toml) configures the build and keeps
+React Router routes working on refresh.
