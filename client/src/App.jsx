@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
-import Auth from './components/Auth';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import ExerciseHistory from './components/ExerciseHistory';
 import ExerciseList from './components/ExerciseList';
 import SymptomTracker from './components/SymptomTracker';
 import Home from './pages/Home';
-import { authApi } from './lib/api';
 
 const ProtectedLayout = ({ darkMode, toggleDarkMode, onLogout }) => (
   <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -36,16 +34,6 @@ const ExerciseHistoryPage = () => (
 );
 
 function App() {
-  const [user, setUser] = useState(() => {
-    try {
-      return localStorage.getItem('breatheWellToken')
-        ? JSON.parse(localStorage.getItem('breatheWellUser') || 'null')
-        : null;
-    } catch {
-      return null;
-    }
-  });
-  const [checkingSession, setCheckingSession] = useState(true);
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem('breatheWellDarkMode') === 'true'
   );
@@ -55,46 +43,13 @@ function App() {
     localStorage.setItem('breatheWellDarkMode', String(darkMode));
   }, [darkMode]);
 
-  useEffect(() => {
-    if (!checkingSession) return;
-    authApi.me()
-      .then(({ user: currentUser }) => setUser(currentUser))
-      .catch(() => {
-        localStorage.removeItem('breatheWellToken');
-        localStorage.removeItem('breatheWellUser');
-        setUser(null);
-      })
-      .finally(() => setCheckingSession(false));
-  }, [checkingSession]);
-
-  const handleLogin = (nextUser) => {
-    localStorage.setItem('breatheWellUser', JSON.stringify(nextUser));
-    setUser(nextUser);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('breatheWellToken');
-    localStorage.removeItem('breatheWellUser');
-    setUser(null);
-  };
-
   return (
     <HashRouter>
-      {checkingSession ? (
-        <div className="flex min-h-screen items-center justify-center text-gray-500">
-          Loading your account...
-        </div>
-      ) : user ? (
-        <ProtectedLayout
-          darkMode={darkMode}
-          toggleDarkMode={() => setDarkMode((current) => !current)}
-          onLogout={handleLogout}
-        />
-      ) : (
-        <Routes>
-          <Route path="*" element={<Auth onLogin={handleLogin} />} />
-        </Routes>
-      )}
+      <ProtectedLayout
+        darkMode={darkMode}
+        toggleDarkMode={() => setDarkMode((current) => !current)}
+        onLogout={() => localStorage.clear()}
+      />
     </HashRouter>
   );
 }

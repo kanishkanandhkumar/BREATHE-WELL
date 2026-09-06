@@ -2,9 +2,8 @@ const read = (key) => JSON.parse(localStorage.getItem(key) || '[]');
 const write = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 
 const getCurrentUser = () => {
-  const user = JSON.parse(localStorage.getItem('breatheWellUser') || 'null');
-  if (!user) throw new Error('Authentication required');
-  return user;
+  return JSON.parse(localStorage.getItem('breatheWellUser') || 'null')
+    || { id: 'local-demo-user', name: 'Demo User', email: 'demo@breathewell.local' };
 };
 
 export const authApi = {
