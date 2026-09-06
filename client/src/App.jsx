@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Auth from './components/Auth';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
@@ -91,7 +91,7 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       {checkingSession ? (
         <div className="flex min-h-screen items-center justify-center text-gray-500">
           Loading your account...
@@ -107,7 +107,7 @@ function App() {
           <Route path="*" element={<Auth onLogin={handleLogin} />} />
         </Routes>
       )}
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

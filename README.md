@@ -54,6 +54,7 @@ Recommended hosting:
 
 - Supabase: authentication and PostgreSQL database
 - Netlify: React/Vite frontend
+- GitHub Pages: React/Vite frontend alternative
 
 ### 1. Supabase
 
@@ -126,3 +127,25 @@ VITE_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
 
 The included [`netlify.toml`](./netlify.toml) configures the build and keeps
 React Router routes working on refresh.
+
+### GitHub Pages alternative
+
+GitHub Pages can host the frontend continuously at:
+
+```text
+https://kanishkanandhkumar.github.io/BREATHE-WELL/
+```
+
+The repository includes [`.github/workflows/deploy-pages.yml`](./.github/workflows/deploy-pages.yml).
+In GitHub, open **Settings → Pages**, set **Source** to **GitHub Actions**, and
+add these repository variables under **Settings → Secrets and variables →
+Actions → Variables**:
+
+```text
+VITE_SUPABASE_URL=https://xtrzewtbbznyujqiasle.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=<your-publishable-key>
+```
+
+Every push to `main` will build and deploy the frontend automatically. Supabase
+continues to provide authentication and data; GitHub Pages only serves the
+static frontend.
