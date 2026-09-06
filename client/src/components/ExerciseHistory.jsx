@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { History, Calendar, Clock, CheckCircle, XCircle } from 'lucide-react';
+import apiRequest from '../lib/api';
 
 const ExerciseHistory = () => {
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
-    // Load from localStorage
-    const saved = JSON.parse(localStorage.getItem('exerciseSessions') || '[]');
-    setSessions(saved.reverse());
+    apiRequest('/exercise-sessions')
+      .then(setSessions)
+      .catch((error) => console.error('Could not load exercise history:', error.message));
   }, []);
 
   const formatDate = (date) => {

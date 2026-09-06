@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { User, Lock, Mail, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { authApi } from '../lib/api';
 
 const Auth = ({ onLogin }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,6 +13,7 @@ const Auth = ({ onLogin }) => {
   });
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,17 +37,24 @@ const Auth = ({ onLogin }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    // Simulate login/register
-    console.log('Form submitted:', formData);
-    setSuccess(true);
-    setTimeout(() => {
-      setSuccess(false);
-      if (onLogin) onLogin(formData);
-    }, 2000);
+    setLoading(true);
+    setErrors({});
+    try {
+      const response = isLogin
+        ? await authApi.login({ email: formData.email, password: formData.password })
+        : await authApi.register({ name: formData.name, email: formData.email, password: formData.password });
+      localStorage.setItem('breatheWellToken', response.token);
+      setSuccess(true);
+      setTimeout(() => onLogin(response.user), 700);
+    } catch (error) {
+      setErrors({ form: error.message });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,6 +79,7 @@ const Auth = ({ onLogin }) => {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+            {errors.form && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-300">{errors.form}</p>}
             {!isLogin && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -157,7 +167,7 @@ const Auth = ({ onLogin }) => {
               type="submit"
               className="btn-primary w-full flex items-center justify-center gap-2"
             >
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {loading ? 'Connecting...' : isLogin ? 'Sign In' : 'Create Account'}
             </button>
 
             <div className="text-center">

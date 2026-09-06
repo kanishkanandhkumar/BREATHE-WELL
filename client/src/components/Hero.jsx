@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Activity, Clock, Award } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   const [scale, setScale] = useState(1);
@@ -63,13 +64,13 @@ const Hero = () => {
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <button className="btn-primary flex items-center gap-2 group">
+              <Link to="/exercises" className="btn-primary flex items-center gap-2 group">
                 Get Started
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button className="btn-outline">
+              </Link>
+              <Link to="/tracker" className="btn-outline">
                 Learn More
-              </button>
+              </Link>
             </div>
           </div>
 

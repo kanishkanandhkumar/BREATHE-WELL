@@ -1,34 +1,104 @@
-import React from 'react'
-import './index.css'
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import Auth from './components/Auth';
+import Header from './components/Header';
+import Dashboard from './components/Dashboard';
+import ExerciseHistory from './components/ExerciseHistory';
+import ExerciseList from './components/ExerciseList';
+import SymptomTracker from './components/SymptomTracker';
+import Home from './pages/Home';
+import { authApi } from './lib/api';
+
+const ProtectedLayout = ({ darkMode, toggleDarkMode, onLogout }) => (
+  <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <Header
+      darkMode={darkMode}
+      toggleDarkMode={toggleDarkMode}
+      onLogout={onLogout}
+    />
+    <main>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/exercises" element={<ExerciseList />} />
+        <Route path="/tracker" element={<SymptomTracker />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/history" element={<ExerciseHistoryPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </main>
+  </div>
+);
+
+const ExerciseHistoryPage = () => (
+  <div className="container-custom py-8">
+    <ExerciseHistory />
+  </div>
+);
 
 function App() {
+  const [user, setUser] = useState(() => {
+    try {
+      return localStorage.getItem('breatheWellToken')
+        ? JSON.parse(localStorage.getItem('breatheWellUser') || 'null')
+        : null;
+    } catch {
+      return null;
+    }
+  });
+  const [checkingSession, setCheckingSession] = useState(
+    () => Boolean(localStorage.getItem('breatheWellToken'))
+  );
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem('breatheWellDarkMode') === 'true'
+  );
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+    localStorage.setItem('breatheWellDarkMode', String(darkMode));
+  }, [darkMode]);
+
+  useEffect(() => {
+    if (!checkingSession) return;
+    authApi.me()
+      .then(({ user: currentUser }) => setUser(currentUser))
+      .catch(() => {
+        localStorage.removeItem('breatheWellToken');
+        localStorage.removeItem('breatheWellUser');
+        setUser(null);
+      })
+      .finally(() => setCheckingSession(false));
+  }, [checkingSession]);
+
+  const handleLogin = (nextUser) => {
+    localStorage.setItem('breatheWellUser', JSON.stringify(nextUser));
+    setUser(nextUser);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('breatheWellToken');
+    localStorage.removeItem('breatheWellUser');
+    setUser(null);
+  };
+
   return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh',
-      flexDirection: 'column',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <h1 style={{ fontSize: '3rem', color: '#48bb78' }}>🌬️ Breathe Well</h1>
-      <p style={{ fontSize: '1.2rem', color: '#4a5568' }}>Testing React</p>
-      <button 
-        onClick={() => alert('React is working!')}
-        style={{
-          marginTop: '1rem',
-          padding: '0.5rem 1rem',
-          background: '#48bb78',
-          color: 'white',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer'
-        }}
-      >
-        Click Me
-      </button>
-    </div>
-  )
+    <BrowserRouter>
+      {checkingSession ? (
+        <div className="flex min-h-screen items-center justify-center text-gray-500">
+          Loading your account...
+        </div>
+      ) : user ? (
+        <ProtectedLayout
+          darkMode={darkMode}
+          toggleDarkMode={() => setDarkMode((current) => !current)}
+          onLogout={handleLogout}
+        />
+      ) : (
+        <Routes>
+          <Route path="*" element={<Auth onLogin={handleLogin} />} />
+        </Routes>
+      )}
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import { Line, Bar, Doughnut, Radar } from 'react-chartjs-2';
 import { TrendingUp, Activity, Calendar, Award, Clock, Heart } from 'lucide-react';
+import apiRequest from '../lib/api';
 
 ChartJS.register(
   CategoryScale,
@@ -37,18 +38,23 @@ const Dashboard = () => {
     streak: 0,
     improvement: 0
   });
+  const [logs, setLogs] = useState([]);
+  const [sessions, setSessions] = useState([]);
 
   // Get data from localStorage
   useEffect(() => {
-    const logs = JSON.parse(localStorage.getItem('symptomLogs') || '[]');
-    const sessions = JSON.parse(localStorage.getItem('exerciseSessions') || '[]');
-    
-    setStats({
-      totalSessions: sessions.length,
-      totalMinutes: sessions.reduce((acc, s) => acc + (s.duration || 0), 0),
-      streak: calculateStreak(sessions),
-      improvement: calculateImprovement(logs)
-    });
+    Promise.all([apiRequest('/symptoms'), apiRequest('/exercise-sessions')])
+      .then(([nextLogs, nextSessions]) => {
+        setLogs(nextLogs);
+        setSessions(nextSessions);
+        setStats({
+          totalSessions: nextSessions.length,
+          totalMinutes: nextSessions.reduce((acc, s) => acc + (s.duration || 0), 0),
+          streak: calculateStreak(nextSessions),
+          improvement: calculateImprovement(nextLogs)
+        });
+      })
+      .catch((error) => console.error('Could not load dashboard data:', error.message));
   }, []);
 
   const calculateStreak = (sessions) => {
@@ -76,12 +82,13 @@ const Dashboard = () => {
   };
 
   // Data for charts
+  const recentLogs = [...logs].slice(0, 7).reverse();
   const symptomData = {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    labels: recentLogs.map((log) => new Date(log.date).toLocaleDateString('en-US', { weekday: 'short' })),
     datasets: [
       {
         label: 'Breathlessness',
-        data: [3, 2, 4, 3, 2, 1, 2],
+        data: recentLogs.map((log) => log.breathlessness),
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.2)',
         tension: 0.4,
@@ -89,7 +96,7 @@ const Dashboard = () => {
       },
       {
         label: 'Coughing',
-        data: [4, 3, 3, 2, 2, 1, 1],
+        data: recentLogs.map((log) => log.coughing),
         borderColor: 'rgb(34, 197, 94)',
         backgroundColor: 'rgba(34, 197, 94, 0.2)',
         tension: 0.4,
@@ -97,7 +104,7 @@ const Dashboard = () => {
       },
       {
         label: 'Wheezing',
-        data: [2, 2, 3, 2, 1, 1, 0],
+        data: recentLogs.map((log) => log.wheezing),
         borderColor: 'rgb(234, 179, 8)',
         backgroundColor: 'rgba(234, 179, 8, 0.2)',
         tension: 0.4,
@@ -106,11 +113,15 @@ const Dashboard = () => {
     ]
   };
 
+  const exerciseCounts = sessions.reduce((counts, session) => {
+    counts[session.name] = (counts[session.name] || 0) + 1;
+    return counts;
+  }, {});
   const exerciseData = {
-    labels: ['Diaphragmatic', 'Pursed-Lip', 'Box', '4-7-8', 'Pranayama'],
+    labels: Object.keys(exerciseCounts).length ? Object.keys(exerciseCounts) : ['No sessions yet'],
     datasets: [{
       label: 'Sessions Completed',
-      data: [12, 8, 6, 4, 3],
+      data: Object.keys(exerciseCounts).length ? Object.values(exerciseCounts) : [0],
       backgroundColor: [
         'rgba(34, 197, 94, 0.8)',
         'rgba(59, 130, 246, 0.8)',

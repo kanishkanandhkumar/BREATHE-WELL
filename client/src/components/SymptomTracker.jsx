@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Activity, Wind, Droplets, Pill, AlertCircle, Check } from 'lucide-react';
+import apiRequest from '../lib/api';
 
 const SymptomTracker = () => {
   const [symptoms, setSymptoms] = useState({
@@ -16,6 +17,7 @@ const SymptomTracker = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
   const triggerOptions = [
     'Pollen', 'Dust', 'Cold Air', 'Exercise', 'Stress', 
@@ -58,16 +60,23 @@ const SymptomTracker = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Symptom Log:', symptoms);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-    
-    // Store in localStorage for demo
-    const logs = JSON.parse(localStorage.getItem('symptomLogs') || '[]');
-    logs.push({ ...symptoms, timestamp: new Date().toISOString() });
-    localStorage.setItem('symptomLogs', JSON.stringify(logs));
+    setError('');
+    try {
+      await apiRequest('/symptoms', { method: 'POST', body: JSON.stringify({
+        ...symptoms,
+        breathlessness: Number(symptoms.breathlessness),
+        coughing: Number(symptoms.coughing),
+        wheezing: Number(symptoms.wheezing),
+        chestTightness: Number(symptoms.chestTightness),
+        peakFlow: symptoms.peakFlow ? Number(symptoms.peakFlow) : null
+      }) });
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 3000);
+    } catch (requestError) {
+      setError(requestError.message);
+    }
   };
 
   const getFeelingEmoji = () => {
@@ -103,6 +112,7 @@ const SymptomTracker = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
+            {error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/20 dark:text-red-300">{error}</p>}
             {/* Date */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

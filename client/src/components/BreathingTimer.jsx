@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, X, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, RotateCcw, X, Volume2, VolumeX, Lightbulb, ShieldAlert } from 'lucide-react';
+import apiRequest from '../lib/api';
 
 const BreathingTimer = ({ exercise, onClose }) => {
-  const [phase, setPhase] = useState('inhale'); // inhale, hold, exhale, hold
+  const [phase, setPhase] = useState('inhale');
   const [timeLeft, setTimeLeft] = useState(4);
   const [isRunning, setIsRunning] = useState(false);
   const [cycleCount, setCycleCount] = useState(0);
@@ -15,12 +16,12 @@ const BreathingTimer = ({ exercise, onClose }) => {
   // Breathing pattern based on exercise
   const getBreathPattern = (exerciseId) => {
     const patterns = {
-      1: { inhale: 4, hold: 2, exhale: 4, hold: 2 }, // Diaphragmatic
-      2: { inhale: 2, hold: 1, exhale: 4, hold: 1 }, // Pursed-Lip
-      3: { inhale: 4, hold: 4, exhale: 4, hold: 4 }, // Box Breathing
-      4: { inhale: 4, hold: 7, exhale: 8, hold: 2 }, // 4-7-8
-      5: { inhale: 4, hold: 2, exhale: 4, hold: 2 }, // Pranayama
-      6: { inhale: 6, hold: 3, exhale: 6, hold: 3 }, // Belly Breathing
+      1: { inhale: 4, holdIn: 2, exhale: 4, holdOut: 2 }, // Diaphragmatic
+      2: { inhale: 2, holdIn: 1, exhale: 4, holdOut: 1 }, // Pursed-Lip
+      3: { inhale: 4, holdIn: 4, exhale: 4, holdOut: 4 }, // Box Breathing
+      4: { inhale: 4, holdIn: 7, exhale: 8, holdOut: 2 }, // 4-7-8
+      5: { inhale: 4, holdIn: 2, exhale: 4, holdOut: 2 }, // Pranayama
+      6: { inhale: 6, holdIn: 3, exhale: 6, holdOut: 3 }, // Belly Breathing
     };
     return patterns[exerciseId] || patterns[1];
   };
@@ -91,7 +92,7 @@ const BreathingTimer = ({ exercise, onClose }) => {
             const newTime = getPhaseDuration(nextPhase);
             
             // Check if cycle complete
-            if (nextPhase === 'inhale' && phase === 'hold') {
+            if (nextPhase === 'inhale' && phase === 'holdOut') {
               setCycleCount((prevCount) => {
                 const newCount = prevCount + 1;
                 if (newCount % 5 === 0) {
@@ -114,7 +115,7 @@ const BreathingTimer = ({ exercise, onClose }) => {
   }, [isRunning, phase]);
 
   const getNextPhase = (currentPhase) => {
-    const phases = ['inhale', 'hold', 'exhale', 'hold'];
+    const phases = ['inhale', 'holdIn', 'exhale', 'holdOut'];
     const currentIndex = phases.indexOf(currentPhase);
     return phases[(currentIndex + 1) % phases.length];
   };
@@ -123,7 +124,8 @@ const BreathingTimer = ({ exercise, onClose }) => {
     switch(phaseName) {
       case 'inhale': return pattern.inhale;
       case 'exhale': return pattern.exhale;
-      case 'hold': return pattern.hold;
+      case 'holdIn': return pattern.holdIn;
+      case 'holdOut': return pattern.holdOut;
       default: return 4;
     }
   };
@@ -132,7 +134,8 @@ const BreathingTimer = ({ exercise, onClose }) => {
     const labels = {
       'inhale': '🌬️ Breathe In',
       'exhale': '😮‍💨 Breathe Out',
-      'hold': '⏸️ Hold'
+      'holdIn': '⏸️ Hold',
+      'holdOut': '⏸️ Hold'
     };
     return labels[phase] || 'Breathe';
   };
@@ -141,7 +144,8 @@ const BreathingTimer = ({ exercise, onClose }) => {
     const colors = {
       'inhale': 'from-blue-400 to-blue-600',
       'exhale': 'from-green-400 to-green-600',
-      'hold': 'from-yellow-400 to-yellow-600'
+      'holdIn': 'from-yellow-400 to-yellow-600',
+      'holdOut': 'from-yellow-400 to-yellow-600'
     };
     return colors[phase] || 'from-gray-400 to-gray-600';
   };
@@ -166,6 +170,21 @@ const BreathingTimer = ({ exercise, onClose }) => {
     clearInterval(timerRef.current);
   };
 
+  const closeTimer = () => {
+    if (totalTime > 0) {
+      const session = {
+        name: exercise.name,
+        emoji: exercise.emoji,
+        duration: Math.max(1, Math.ceil(totalTime / 60)),
+        completed: cycleCount > 0,
+        date: new Date().toISOString()
+      };
+      apiRequest('/exercise-sessions', { method: 'POST', body: JSON.stringify(session) })
+        .catch((error) => console.error('Could not save exercise session:', error.message));
+    }
+    onClose();
+  };
+
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -174,7 +193,7 @@ const BreathingTimer = ({ exercise, onClose }) => {
 
   // Progress calculation
   const progress = () => {
-    const total = pattern.inhale + pattern.hold + pattern.exhale + pattern.hold;
+    const total = pattern.inhale + pattern.holdIn + pattern.exhale + pattern.holdOut;
     const current = getPhaseDuration(phase);
     return ((total - timeLeft) / total) * 100;
   };
@@ -184,20 +203,30 @@ const BreathingTimer = ({ exercise, onClose }) => {
       <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <div>
+          <div className="min-w-0">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">
               {exercise.emoji} {exercise.name}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {cycleCount} cycles completed
+              {cycleCount} {cycleCount === 1 ? 'cycle' : 'cycles'} completed · {exercise.bestFor}
             </p>
           </div>
           <button
-            onClick={onClose}
+            onClick={closeTimer}
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
+        </div>
+
+        <div className="mb-4 rounded-2xl bg-primary-50 p-4 dark:bg-primary-900/20">
+          <div className="flex items-start gap-3">
+            <Lightbulb className="mt-0.5 h-5 w-5 shrink-0 text-primary-600 dark:text-primary-400" />
+            <div>
+              <p className="text-sm font-semibold text-primary-800 dark:text-primary-200">Why this exercise?</p>
+              <p className="mt-1 text-sm leading-relaxed text-primary-700 dark:text-primary-300">{exercise.why}</p>
+            </div>
+          </div>
         </div>
 
         {/* Main Breathing Circle */}
@@ -302,9 +331,14 @@ const BreathingTimer = ({ exercise, onClose }) => {
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {isRunning ? 'Focus on your breath' : 'Press play to start'}
           </p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-            Pattern: Inhale {pattern.inhale}s → Hold {pattern.hold}s → Exhale {pattern.exhale}s → Hold {pattern.hold}s
+          <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+            Pattern: Inhale {pattern.inhale}s → Hold {pattern.holdIn}s → Exhale {pattern.exhale}s → Hold {pattern.holdOut}s
           </p>
+          <p className="mt-2 text-xs italic text-gray-400 dark:text-gray-500">“{exercise.cue}”</p>
+          <div className="mt-3 flex items-center justify-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+            <ShieldAlert className="h-3.5 w-3.5" />
+            Stop if you feel dizzy or uncomfortable.
+          </div>
         </div>
       </div>
     </div>
